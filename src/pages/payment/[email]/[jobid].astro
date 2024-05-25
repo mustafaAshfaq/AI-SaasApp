@@ -1,0 +1,81 @@
+---
+import { app } from "../../../firebase/server";
+import { getFirestore } from "firebase-admin/firestore";
+import { getAuth } from "firebase-admin/auth";
+
+function delay(ms: number) {
+    return new Promise( resolve => setTimeout(resolve, ms) );
+}
+
+interface PaymentSession{
+  error: Error,
+  url: string,
+}
+
+const { email, jobid } = Astro.params;
+
+if (!jobid) {
+  return Astro.redirect("/404");
+}
+
+const auth = getAuth(app);
+const db = getFirestore(app);
+var uid = "undefined"
+
+//check whether user with that email already exists, if yes, get the uid
+try {
+  const userRecord = await auth.getUserByEmail(email)
+  uid = userRecord.uid
+ } catch {
+  const r = await auth.createUser({
+                  uid: jobid,
+                  email,
+                  password: jobid,
+              });
+
+  uid = jobid
+}
+
+//update add userid to job 
+await db.collection('jobs').doc(jobid).update({
+  userid: uid,
+  email
+})
+const customerDocRef = await db.collection('customers-test').doc(uid).collection('checkout_sessions') //prod customers testin customers-test
+.add({
+    mode: 'payment',
+    price: 'price_1OfMjZDwvqWM7VkQiKwBy65a', //prod price_1ObVkBDwvqWM7VkQc9xYIJAC testing price_1OcUrMDwvqWM7VkQeYAvG5iU
+    success_url: Astro.url.origin + "/payment/success",
+    cancel_url: Astro.url.origin + "",
+});
+//todo: move whole of this in firebase function later when payments is enabled
+await delay(250);
+const querySnapshot=await db.collection('jobs').where('userid','==',uid,).where("status", "==", "unpaid").orderBy("timestamp", "desc").limit(1).get()
+if (!querySnapshot.empty) { // Checking if the query returned any documents
+        const doc = querySnapshot.docs[0]; // Getting the first document from the results
+        const jobsDocRef = doc.ref; // Getting the DocumentReference of the document
+    
+        await jobsDocRef.update({
+            status: "paid"
+        });
+    } else {
+        // Handle the case where no documents match the query
+        console.log('No matching documents found');
+    }
+
+/* uncomment when payment setup done on firebase
+const snap = await customerDocRef.get()
+var session = snap.data() as PaymentSession
+while (!session.url){
+
+  await delay(250)
+
+  const snap = await docRef.get()
+  var session = snap.data() as PaymentSession
+
+}*/
+var session={url:"/"}
+
+---
+
+<meta http-equiv="Refresh" content=`0; url='${session.url}'` />

@@ -1,0 +1,46 @@
+---
+import FormUpload from "./FormUpload.astro";
+---
+
+<div
+    class="p-4 my-4 mx-4 bg-white rounded-lg shadow md:p-6 xl:p-8 dark:bg-gray-800"
+>
+
+<div class="grid lg:grid-cols-2 gap-3">
+
+    <div class = "col-span-1 m-4">
+        <article class="flex justify-center">
+            <div class="text-black w-full readme format lg:format-lg">
+
+                <p class="text-2xl">
+                    <span class="font-extrabold">Limited Time Offer:</span> <s>$9</s> $0.99 for 4 photos of boy and 4 photos of girl delivered within an hour via email.
+
+                    
+                </p>
+
+                <p class="text-2xl">
+                    One-Time Payment. No Subscription.
+                </p>
+
+                <hr>
+    
+                <p>
+                    IMPORTANT NOTES
+
+                    <ol>
+                        <li>Please make sure you enter correct email.</li>
+                        <li>Check spam box if order is not found in inbox.</li>
+                    </ol>
+                </p>
+    
+            </div>
+        </article>
+    </div>
+
+
+    <div class = "col-span-1 m-4">
+        <FormUpload></FormUpload>
+    </div>
+</div>
+
+</div>
