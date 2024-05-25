@@ -2,11 +2,13 @@ import type { ServiceAccount } from "firebase-admin";
 import { initializeApp, cert, getApps } from "firebase-admin/app";
 
 const activeApps = getApps();
+const {privateKey}=JSON.parse(import.meta.env.FIREBASE_PRIVATE_KEY);
+console.log(privateKey);
 const serviceAccount = {
   type: "service_account",
   project_id: import.meta.env.FIREBASE_PROJECT_ID,
   private_key_id: import.meta.env.FIREBASE_PRIVATE_KEY_ID,
-  private_key: import.meta.env.FIREBASE_PRIVATE_KEY,
+  private_key: privateKey,
   client_email: import.meta.env.FIREBASE_CLIENT_EMAIL,
   client_id: import.meta.env.FIREBASE_CLIENT_ID,
   auth_uri: import.meta.env.FIREBASE_AUTH_URI,
