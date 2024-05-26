@@ -18,6 +18,7 @@ export const POST: APIRoute = async ({ cookies, request, redirect }) => {
         });
 
     } catch (e: any) {
+        console.log(e);
         return new Response("Something went wrong", {
           status: 500,
         });
