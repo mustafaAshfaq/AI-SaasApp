@@ -2,6 +2,7 @@ import type { ServiceAccount } from "firebase-admin";
 import { initializeApp, cert, getApps } from "firebase-admin/app";
 import {Buffer} from 'node:buffer'
 const activeApps = getApps();
+console.log(Buffer.from(import.meta.env.FIREBASE_PRIVATE_KEY_ENC,'base64').toString('utf8'));
 const serviceAccount = {
   type: "service_account",
   project_id: import.meta.env.FIREBASE_PROJECT_ID,
